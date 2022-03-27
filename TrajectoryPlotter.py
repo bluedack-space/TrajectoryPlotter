@@ -1,6 +1,7 @@
 import numpy as np
 import pymap3d as pm
 import plotly.graph_objects as go
+from PandasHandler import *
 
 class TrajectoryPlotter:
 
@@ -34,3 +35,19 @@ class TrajectoryPlotter:
         trace= go.Surface(x=x0, y=y0, z=z0, colorscale=[[0,clr], [1,clr]], hoverinfo='skip')
         trace.update(showscale=False)
         return trace
+
+    @staticmethod
+    def displayEarth(fig,filePathEarth='earth.xlsx',row=1,col=2):
+        dfSet         = PandasHandler.readAllSheets_Excel(filePathEarth)
+        df            = dfSet[0]
+        Earth = TrajectoryPlotter.getEarth('#325bff',imax=40)
+        fig.add_trace( go.Scatter3d( x=df["Trace 0, x"], y=df["Trace 0, y"], z=df["Trace 0, z"], mode='lines', marker=dict(size=1, color='grey'   ), name="", hoverinfo='skip'), row=row, col=col )
+        fig.add_trace( go.Scatter3d( x=df["Trace 1, x"], y=df["Trace 1, y"], z=df["Trace 1, z"], mode='lines', marker=dict(size=1, color='grey'   ), name="", hoverinfo='skip'), row=row, col=col )
+        fig.add_trace( Earth, row=row, col=col)
+        fig.add_trace( go.Scatter3d( x=df["Trace 3, x"], y=df["Trace 3, y"], z=df["Trace 3, z"], mode='lines', marker=dict(size=1, color='white'  ), name="", hoverinfo='skip'), row=row, col=col )
+        fig.update_layout(scene=dict(xaxis=dict(title="X-ECEF[km]", showgrid=True, showline=True, zeroline=False, backgroundcolor='black', color='grey', gridcolor='grey')))
+        fig.update_layout(scene=dict(yaxis=dict(title="Y-ECEF[km]", showgrid=True, showline=True, zeroline=False, backgroundcolor='black', color='grey', gridcolor='grey')))
+        fig.update_layout(scene=dict(zaxis=dict(title="Z-ECEF[km]", showgrid=True, showline=True, zeroline=False, backgroundcolor='black', color='grey', gridcolor='grey')))
+        fig.update_layout(scene=dict(bgcolor="black"))
+        #fig.update_layout(showlegend=False)
+
